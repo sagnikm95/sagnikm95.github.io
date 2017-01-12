@@ -52,17 +52,23 @@ var PADDLE_HALF_LENGTH = 25;
 function Paddle(pos) {
 	this.pos = pos;
 	this.vel_y = 1;
-	this.move_up = function(dt) {
-		pos.y -= vel_y * dt;
+	this.move_up = function() {
+		pos.y -= vel_y ;
 	};
-	this.move_down = function(dt) {
-		pos.y += vel_y * dt;
+	this.move_down = function() {
+		pos.y += vel_y ;
 	}
 	this.draw = function() {
 		context.fillstyle = "white";
 		context.fillRect(pos.x - PADDLE_HALF_BREADTH,
 				pos.y - PADDLE_HALF_LENGTH,
 				2 * PADDLE_HALF_BREADTH, 2 * PADDLE_HALF_LENGTH);
+	}
+	
+	this.move = function(){
+		if(this.pos.y + PADDLE_HALF_LENGTH + this.vel_y > canvas.height || this.pos.y -PADDLE_HALF_LENGTH + this.vel_y <0 )
+			vel_y= -vel_y ;
+		this.pos.y += this.vel_y;
 	}
 }
 
@@ -86,10 +92,18 @@ var paddle1 = new Paddle(PADDLE1_START_POS);
 var paddle2 = new Paddle(PADDLE2_START_POS);
 //var lastDrawnTime = new Date().getTime();
 
+function collision(ball,paddle){
+	if( ball.pos.x - BALL_RADIUS < (9 + 2* PADDLE_HALF_BREADTH ) &&  (ball.pos.y < paddle.pos.y + PADDLE_HALF_LENGTH ) && ( ball.pos.y >  paddle.pos.y - PADDLE_HALF_LENGTH )) 
+		ball.vel.x=-ball.vel.x;
+	
+}
 function drawGameState() {
 	draw_board();
 	ball.draw();
+	paddle1.move();
+	collision(ball,paddle1);
 	paddle1.draw();
+	
 	paddle2.draw();
 	//lastDrawnTime = new Date().getTime();
 }
@@ -102,8 +116,8 @@ window.main = function() {
 		drawGameState();
 	}
 	else{
-		alert("LOST GAME OVER");
-		document.location.reload();
+		//alert("LOST GAME OVER");
+		//document.location.reload();
 	}
 	
 }
