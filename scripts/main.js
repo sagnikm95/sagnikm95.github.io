@@ -163,7 +163,7 @@ window.main = function() {
 	}
 	else{
 		//alert("LOST GAME OVER");
-		//document.location.reload();
+		document.location.reload();
 	}
 	
 }
