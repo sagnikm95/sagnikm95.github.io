@@ -1,6 +1,34 @@
 var canvas = document.getElementById("game-canvas");
 var context = canvas.getContext("2d");
+var upPressed = false;
+var downPressed = false;
 
+document.addEventListener("keydown", keyDownHandler, false);
+document.addEventListener("keyup", keyUpHandler, false);
+document.addEventListener("mousemove", mouseMoveHandler, false);
+function keyDownHandler(e) {
+    if(e.keyCode == 38) {
+        upPressed = true;
+    }
+    else if(e.keyCode == 40) {
+        downPressed = true;
+    }
+}
+function keyUpHandler(e) {
+    if(e.keyCode == 38) {
+        upPressed = false;
+    }
+    else if(e.keyCode == 40) {
+        upPressed = false;
+    }
+}
+
+function mouseMoveHandler(e) {
+    var relativeY = e.clientY;
+    if(relativeY  > 0 && relativeY < canvas.width) {
+        paddle2.pos.y = relativeY - PADDLE_HALF_LENGTH;
+    }
+}
 function Pos(x, y) {
 	this.x = x;
 	this.y = y;
@@ -53,10 +81,10 @@ function Paddle(pos) {
 	this.pos = pos;
 	this.vel_y = 1;
 	this.move_up = function() {
-		pos.y -= vel_y ;
+		pos.y -= this.vel_y ;
 	};
 	this.move_down = function() {
-		pos.y += vel_y ;
+		pos.y += this.vel_y ;
 	}
 	this.draw = function() {
 		context.fillstyle = "white";
@@ -67,8 +95,18 @@ function Paddle(pos) {
 	
 	this.move = function(){
 		if(this.pos.y + PADDLE_HALF_LENGTH + this.vel_y > canvas.height || this.pos.y -PADDLE_HALF_LENGTH + this.vel_y <0 )
-			vel_y= -vel_y ;
+			this.vel_y= -this.vel_y ;
 		this.pos.y += this.vel_y;
+	}
+	
+	this.move2=function(){
+		if(upPressed && this.pos.y - PADDLE_HALF_LENGTH - this.vel_y > 0) {
+			this.move_up();
+    }
+    else if(downPressed && this.pos.y + PADDLE_HALF_LENGTH + this.vel_y < canvas.height) {
+        this.move_down();
+    }
+    
 	}
 }
 
@@ -92,8 +130,14 @@ var paddle1 = new Paddle(PADDLE1_START_POS);
 var paddle2 = new Paddle(PADDLE2_START_POS);
 //var lastDrawnTime = new Date().getTime();
 
-function collision(ball,paddle){
+function collisionLeft(ball,paddle){
 	if( ball.pos.x - BALL_RADIUS < (9 + 2* PADDLE_HALF_BREADTH ) &&  (ball.pos.y < paddle.pos.y + PADDLE_HALF_LENGTH ) && ( ball.pos.y >  paddle.pos.y - PADDLE_HALF_LENGTH )) 
+		ball.vel.x=-ball.vel.x;
+	
+}
+
+function collisionRight(ball,paddle){
+	if( ball.pos.x + BALL_RADIUS >(canvas.width-9 - 2* PADDLE_HALF_BREADTH ) &&  (ball.pos.y < paddle.pos.y + PADDLE_HALF_LENGTH ) && ( ball.pos.y >  paddle.pos.y - PADDLE_HALF_LENGTH )) 
 		ball.vel.x=-ball.vel.x;
 	
 }
@@ -101,7 +145,9 @@ function drawGameState() {
 	draw_board();
 	ball.draw();
 	paddle1.move();
-	collision(ball,paddle1);
+	paddle2.move2();
+	collisionLeft(ball,paddle1);
+	collisionRight(ball,paddle2);
 	paddle1.draw();
 	
 	paddle2.draw();
