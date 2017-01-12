@@ -162,7 +162,7 @@ window.main = function() {
 		drawGameState();
 	}
 	else{
-		//alert("LOST GAME OVER");
+		alert("LOST GAME OVER");
 		document.location.reload();
 	}
 	
