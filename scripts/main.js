@@ -140,6 +140,7 @@ var PADDLE2_START_POS = new Pos(canvas.width - 1 - 9, canvas.height / 2);
 var ball = new Ball(BALL_START_POS, new Velocity(5, 5));
 var paddle1 = new Paddle(PADDLE1_START_POS);
 var paddle2 = new Paddle(PADDLE2_START_POS);
+paddle1.vel_y=5;
 //var lastDrawnTime = new Date().getTime();
 
 function collisionLeft(ball,paddle){
@@ -167,14 +168,14 @@ function drawScore() {
 }
 
 function intelligentPlay(ball,paddle1){
-	if(ball.pos.x==canvas.width-50 && ball.vel.x<0){
+	
 		
 		if(ball.vel.y>0)
 			paddle1.vel_y=Math.abs(paddle1.vel_y);
 		else
 			paddle1.vel_y=-1*Math.abs(paddle1.vel_y);
 			
-	}
+	
 		
 	
 	
